@@ -33,12 +33,18 @@ class AuthController extends Controller
             \Log::error('Could not send pending notification to user: ' . $e->getMessage());
         }
 
-        // 2. Send Approval Request to Super Admin
-        $superAdminEmail = env('SUPER_ADMIN_EMAIL', 'master@example.com');
+        // 2. Send Approval Request to all approved admins
         try {
-            Mail::to($superAdminEmail)->send(new \App\Mail\AdminApprovalRequest($user));
+            $adminEmails = User::where('is_approved', true)->pluck('email');
+            if ($adminEmails->isNotEmpty()) {
+                Mail::to($adminEmails)->send(new \App\Mail\AdminApprovalRequest($user));
+            } else {
+                // Fallback to super admin email if no admins approved yet
+                $superAdminEmail = env('SUPER_ADMIN_EMAIL', 'master@example.com');
+                Mail::to($superAdminEmail)->send(new \App\Mail\AdminApprovalRequest($user));
+            }
         } catch (\Exception $e) {
-            \Log::error('Could not send approval email to super admin: ' . $e->getMessage());
+            \Log::error('Could not send approval email to admins: ' . $e->getMessage());
         }
 
         return response()->json([

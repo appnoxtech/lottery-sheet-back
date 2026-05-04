@@ -31,7 +31,7 @@ class CustomerAcceptanceMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Lottery Request Processed - Curacao Lottery')
-                    ->markdown('emails.customer_acceptance');
+        return $this->subject('Lottery Request Processed')
+                    ->view('emails.customer_acceptance_industrial');
     }
 }

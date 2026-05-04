@@ -10,8 +10,7 @@ We are pleased to inform you that your lottery request has been processed and ac
 - **Type:** {{ $lotteryRequest->lottery_type }}
 - **Numbers:** {{ is_array($lotteryRequest->lottery_numbers) ? implode(', ', $lotteryRequest->lottery_numbers) : $lotteryRequest->lottery_numbers }}
 
-Thank you for choosing Curacao Lottery. We wish you the best of luck!
+Thank you for choosing us. We wish you the best of luck!
 
-Thanks,<br>
-The {{ config('app.name') }} Team
+Thanks
 @endcomponent

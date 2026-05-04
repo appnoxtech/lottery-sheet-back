@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LotteryRequest;
+use App\Models\User;
 use App\Mail\AdminNotification;
 use App\Mail\CustomerAcceptanceMail;
 use Illuminate\Http\Request;
@@ -33,10 +34,12 @@ class LotteryRequestController extends Controller
 
         $lotteryRequest = LotteryRequest::create($validated);
 
-        // Send email to admin (assuming a configured admin email or env variable)
+        // Send email to all approved admins
         try {
-            $adminEmail = env('ADMIN_EMAIL', 'admin@example.com');
-            Mail::to($adminEmail)->send(new AdminNotification($lotteryRequest));
+            $adminEmails = User::where('is_approved', true)->pluck('email');
+            if ($adminEmails->isNotEmpty()) {
+                Mail::to($adminEmails)->send(new AdminNotification($lotteryRequest));
+            }
         } catch (\Exception $e) {
             // Log the error but don't fail the request if email is not configured properly
             \Log::error('Failed to send admin notification email: ' . $e->getMessage());
@@ -58,10 +61,10 @@ class LotteryRequestController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 

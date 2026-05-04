@@ -32,15 +32,6 @@ class AdminNotification extends Mailable
     public function build()
     {
         return $this->subject('New Lottery Request - ' . $this->lotteryRequest->name)
-                    ->html('
-                        <h2>New Lottery Request Received</h2>
-                        <p><strong>Name:</strong> ' . $this->lotteryRequest->name . '</p>
-                        <p><strong>Email:</strong> ' . $this->lotteryRequest->email . '</p>
-                        <p><strong>Phone:</strong> ' . $this->lotteryRequest->phone . '</p>
-                        <p><strong>Type:</strong> ' . $this->lotteryRequest->lottery_type . '</p>
-                        <p><strong>Numbers:</strong> ' . implode(", ", $this->lotteryRequest->lottery_numbers) . '</p>
-                        <p><strong>Amount per Number:</strong> ' . $this->lotteryRequest->amount . '</p>
-                        <p><strong>Notes:</strong> ' . ($this->lotteryRequest->notes ?? 'N/A') . '</p>
-                    ');
+                    ->view('emails.admin_notification_industrial');
     }
 }
