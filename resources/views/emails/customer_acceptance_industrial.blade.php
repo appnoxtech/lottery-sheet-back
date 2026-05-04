@@ -132,7 +132,7 @@
                         <table class="details-table">
                             <tr>
                                 <td class="label">Amount Paid</td>
-                                <td class="value">${{ number_format($lotteryRequest->amount, 2) }}</td>
+                                <td class="value">{{ $lotteryRequest->currency }}{{ number_format($lotteryRequest->amount, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="label">Lottery Type</td>

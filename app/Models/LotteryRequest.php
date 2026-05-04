@@ -11,12 +11,14 @@ class LotteryRequest extends Model
 
     protected $fillable = [
         'name',
+        'country_code',
         'phone',
         'email',
         'lottery_numbers',
         'amount',
         'lottery_type',
         'notes',
+        'currency',
         'status',
     ];
 

@@ -15,12 +15,19 @@ class LotteryRequestController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'country_code' => 'required|string|max:10',
+            'phone' => 'required|string|regex:/^\d{7,15}$/',
             'email' => 'required|email|max:255',
             'lottery_numbers' => 'required',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0.01|max:1000000',
+            'currency' => 'required|string|max:10',
             'lottery_type' => 'required|string|max:100',
             'notes' => 'nullable|string'
+        ], [
+            'amount.max' => 'The amount entered exceeds the maximum allowed limit of 1,000,000 per request.',
+            'amount.min' => 'The amount must be at least 0.01.',
+            'phone.regex' => 'Phone number should be between 7 and 15 digits.',
+            'country_code.required' => 'Please select a country code.',
         ]);
 
         // Process lottery_numbers if it comes as a string or array

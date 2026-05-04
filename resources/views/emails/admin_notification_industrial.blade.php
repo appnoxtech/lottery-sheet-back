@@ -142,7 +142,7 @@
                             </tr>
                             <tr>
                                 <td class="label">Phone Number</td>
-                                <td class="value">{{ $lotteryRequest->phone }}</td>
+                                <td class="value">{{ $lotteryRequest->country_code }} {{ $lotteryRequest->phone }}</td>
                             </tr>
                             <tr>
                                 <td class="label">Lottery Type</td>
@@ -154,7 +154,7 @@
                             </tr>
                             <tr>
                                 <td class="label">Amount Paid</td>
-                                <td class="value">${{ number_format($lotteryRequest->amount, 2) }}</td>
+                                <td class="value">{{ $lotteryRequest->currency }}{{ number_format($lotteryRequest->amount, 2) }}</td>
                             </tr>
                             @if($lotteryRequest->notes)
                             <tr>
