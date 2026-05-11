@@ -105,7 +105,9 @@ class LotteryRequestController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('lottery_numbers', 'like', "%{$search}%")
+                    ->orWhereRaw("CONCAT(country_code, ' ', phone) LIKE ?", ["%{$search}%"]);
             });
         }
 
@@ -118,7 +120,7 @@ class LotteryRequestController extends Controller
         }
 
         if ($request->filled('lottery_type') && $request->lottery_type !== 'all') {
-            $query->where('lottery_type', $request->lottery_type);
+            $query->whereJsonContains('lottery_selections', $request->lottery_type);
         }
 
         $requests = $query->orderBy('created_at', 'desc')->get();
