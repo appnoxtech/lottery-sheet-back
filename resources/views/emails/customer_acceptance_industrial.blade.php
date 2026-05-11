@@ -132,10 +132,6 @@
                         <table class="details-table">
                             <tr>
                                 <td class="label">Lottery Type</td>
-                                <td class="value">{{ $lotteryRequest->lottery_type }}</td>
-                            </tr>
-                            <tr>
-                                <td class="label">Selected Lotteries</td>
                                 <td class="value">{{ is_array($lotteryRequest->lottery_selections) ? implode(', ', $lotteryRequest->lottery_selections) : $lotteryRequest->lottery_selections }}</td>
                             </tr>
                             <tr>

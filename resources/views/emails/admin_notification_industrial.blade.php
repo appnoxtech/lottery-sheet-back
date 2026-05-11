@@ -146,15 +146,11 @@
                             </tr>
                             <tr>
                                 <td class="label">Lottery Type</td>
-                                <td class="value">{{ $lotteryRequest->lottery_type }}</td>
+                                <td class="value">{{ is_array($lotteryRequest->lottery_selections) ? implode(', ', $lotteryRequest->lottery_selections) : $lotteryRequest->lottery_selections }}</td>
                             </tr>
                             <tr>
                                 <td class="label">Numbers</td>
                                 <td class="value">{{ is_array($lotteryRequest->lottery_numbers) ? implode(', ', $lotteryRequest->lottery_numbers) : $lotteryRequest->lottery_numbers }}</td>
-                            </tr>
-                            <tr>
-                                <td class="label">Selected Lotteries</td>
-                                <td class="value">{{ is_array($lotteryRequest->lottery_selections) ? implode(', ', $lotteryRequest->lottery_selections) : $lotteryRequest->lottery_selections }}</td>
                             </tr>
                             <tr>
                                 <td class="label">Number Types</td>
