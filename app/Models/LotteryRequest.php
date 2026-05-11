@@ -15,6 +15,8 @@ class LotteryRequest extends Model
         'phone',
         'email',
         'lottery_numbers',
+        'lottery_selections',
+        'number_types',
         'amount',
         'lottery_type',
         'notes',
@@ -24,5 +26,7 @@ class LotteryRequest extends Model
 
     protected $casts = [
         'lottery_numbers' => 'array',
+        'lottery_selections' => 'array',
+        'number_types' => 'array',
     ];
 }

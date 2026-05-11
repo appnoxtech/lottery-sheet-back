@@ -13,28 +13,62 @@ class LotteryRequestController extends Controller
 {
     public function store(Request $request)
     {
+        // Pre-validate and sanitize phone number
+        $phone = preg_replace('/\D/', '', trim($request->phone ?? ''));
+        $request->merge(['phone' => $phone]);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'country_code' => 'required|string|max:10',
-            'phone' => 'required|string|regex:/^\d{7,15}$/',
+            'country_code' => 'required|string|regex:/^\+\d{1,4}$/',
+            'phone' => 'required|string|regex:/^[0-9]{7,15}$/',
             'email' => 'required|email|max:255',
             'lottery_numbers' => 'required',
-            'amount' => 'required|numeric|min:0.01|max:1000000',
-            'currency' => 'required|string|max:10',
+            'lottery_selections' => 'required|array|min:1',
+            'number_types' => 'required|array|min:1',
+            'currency' => 'nullable|string|max:10',
             'lottery_type' => 'required|string|max:100',
             'notes' => 'nullable|string'
         ], [
-            'amount.max' => 'The amount entered exceeds the maximum allowed limit of 1,000,000 per request.',
-            'amount.min' => 'The amount must be at least 0.01.',
-            'phone.regex' => 'Phone number should be between 7 and 15 digits.',
-            'country_code.required' => 'Please select a country code.',
+            'name.required' => 'Please enter your full name',
+            'country_code.required' => 'Please select a country code',
+            'country_code.regex' => 'Please select a valid country code',
+            'phone.required' => 'Please enter your phone number',
+            'phone.regex' => 'Phone number must contain 7–15 digits',
+            'email.required' => 'Please enter your email address',
+            'email.email' => 'Please enter a valid email address',
+            'lottery_numbers.required' => 'Please enter at least one lottery number',
+            'lottery_selections.required' => 'Please select at least one lottery',
+            'lottery_selections.min' => 'Please select at least one lottery',
+            'number_types.required' => 'Please select at least one number type',
+            'number_types.min' => 'Please select at least one number type',
         ]);
+
+        // Reject fake/spam numbers (all digits identical)
+        if (preg_match('/^(.)\1+$/', $phone)) {
+            return response()->json([
+                'message' => 'Please enter a valid phone number',
+                'errors' => ['phone' => ['Please enter a valid phone number']]
+            ], 422);
+        }
+
+        // Phone is already sanitized to digits-only above
+        $validated['phone'] = $phone;
 
         // Process lottery_numbers if it comes as a string or array
         if (is_string($validated['lottery_numbers'])) {
             $validated['lottery_numbers'] = array_map('trim', explode(',', $validated['lottery_numbers']));
         } elseif (!is_array($validated['lottery_numbers'])) {
             return response()->json(['message' => 'The lottery numbers must be an array or comma-separated string.'], 422);
+        }
+
+        // Process lottery_selections if it comes as a string
+        if (is_string($validated['lottery_selections'])) {
+            $validated['lottery_selections'] = array_map('trim', explode(',', $validated['lottery_selections']));
+        }
+
+        // Process number_types if it comes as a string
+        if (is_string($validated['number_types'])) {
+            $validated['number_types'] = array_map('trim', explode(',', $validated['number_types']));
         }
 
         $validated['status'] = 'pending';
@@ -85,14 +119,6 @@ class LotteryRequestController extends Controller
 
         if ($request->filled('lottery_type') && $request->lottery_type !== 'all') {
             $query->where('lottery_type', $request->lottery_type);
-        }
-
-        if ($request->filled('min_amount')) {
-            $query->where('amount', '>=', $request->min_amount);
-        }
-
-        if ($request->filled('max_amount')) {
-            $query->where('amount', '<=', $request->max_amount);
         }
 
         $requests = $query->orderBy('created_at', 'desc')->get();

@@ -131,12 +131,16 @@
                     <div class="details-box">
                         <table class="details-table">
                             <tr>
-                                <td class="label">Amount Paid</td>
-                                <td class="value">{{ $lotteryRequest->currency }}{{ number_format($lotteryRequest->amount, 2) }}</td>
-                            </tr>
-                            <tr>
                                 <td class="label">Lottery Type</td>
                                 <td class="value">{{ $lotteryRequest->lottery_type }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Selected Lotteries</td>
+                                <td class="value">{{ is_array($lotteryRequest->lottery_selections) ? implode(', ', $lotteryRequest->lottery_selections) : $lotteryRequest->lottery_selections }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Number Types</td>
+                                <td class="value">{{ is_array($lotteryRequest->number_types) ? implode(', ', $lotteryRequest->number_types) : $lotteryRequest->number_types }}</td>
                             </tr>
                             <tr>
                                 <td class="label">Your Numbers</td>
@@ -144,6 +148,8 @@
                             </tr>
                         </table>
                     </div>
+
+                    <p><strong>Payment Instructions:</strong> You will receive your ticket details and a Paysigur payment link via WhatsApp shortly. Please complete the payment to finalize your lottery entry.</p>
 
                     <p>Thank you for choosing us. We wish you the best of luck with your numbers!</p>
                     
