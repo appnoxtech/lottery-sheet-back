@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/admin/requests/share-email', [LotteryRequestController::class, 'shareViaEmail']);
 
     Route::apiResource('/admin/lottery-types', LotteryTypeController::class);
+    Route::post('/admin/lottery-types/reorder', [LotteryTypeController::class, 'reorder']);
 
     // Admin User Management
     Route::get('/admin/pending-users', [AuthController::class, 'getPendingUsers']);

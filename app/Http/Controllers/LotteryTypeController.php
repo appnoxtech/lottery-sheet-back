@@ -16,7 +16,7 @@ class LotteryTypeController extends Controller
             $query->where('is_active', true);
         }
         
-        return response()->json($query->orderBy('name')->get());
+        return response()->json($query->orderBy('sort_order')->get());
     }
 
     public function store(Request $request)
@@ -53,5 +53,23 @@ class LotteryTypeController extends Controller
         $type->delete();
 
         return response()->json(['message' => 'Type deleted successfully']);
+    }
+
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'orders' => 'required|array',
+            'orders.*.id' => 'required|integer|exists:lottery_types,id',
+            'orders.*.sort_order' => 'required|integer|min:1'
+        ]);
+
+        \DB::transaction(function () use ($validated) {
+            foreach ($validated['orders'] as $order) {
+                LotteryType::where('id', $order['id'])
+                    ->update(['sort_order' => $order['sort_order']]);
+            }
+        });
+
+        return response()->json(['message' => 'Lottery types reordered successfully']);
     }
 }
