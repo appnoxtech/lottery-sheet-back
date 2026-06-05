@@ -16,15 +16,15 @@ class WatiService
 
     public function __construct()
     {
-        $this->apiUrl   = rtrim(env('WATI_API_URL', ''), '/');
+        $this->apiUrl = rtrim(env('WATI_API_URL', ''), '/');
         $this->apiToken = env('WATI_API_TOKEN', '');
 
         $this->client = new Client([
             'timeout' => 15,
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->apiToken,
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
             ],
         ]);
     }
@@ -60,11 +60,11 @@ class WatiService
 
         // Form parameters for template message
         $templateParams = [
-            ['name' => '1', 'value' => $lotteryRequest->name],
-            ['name' => '2', 'value' => $lotteryRequest->country_code . $lotteryRequest->phone],
-            ['name' => '3', 'value' => $lotteryRequest->email ?? 'N/A'],
-            ['name' => '4', 'value' => $lotteryNames],
-            ['name' => '5', 'value' => $numbers]
+            ['name' => 'customer_name', 'value' => $lotteryRequest->name],
+            ['name' => 'phone', 'value' => $lotteryRequest->country_code . $lotteryRequest->phone],
+            ['name' => 'email', 'value' => $lotteryRequest->email ?? 'N/A'],
+            ['name' => 'lottery_name', 'value' => $lotteryNames],
+            ['name' => 'numbers', 'value' => $numbers]
         ];
 
         // Format message body for session fallback (plain text)
@@ -118,6 +118,7 @@ class WatiService
                 'json' => $payload
             ]);
             $body = json_decode($response->getBody()->getContents(), true);
+            // print_r($body);
 
             if (isset($body['result']) && ($body['result'] === true || $body['result'] === 'True')) {
                 Log::info("WATI: ✅ Template message successfully sent to {$adminEmail} ({$whatsappNumber}).");
@@ -161,7 +162,7 @@ class WatiService
 
         try {
             $response = $this->client->post($url);
-            $body     = json_decode($response->getBody()->getContents(), true);
+            $body = json_decode($response->getBody()->getContents(), true);
 
             if (isset($body['result']) && ($body['result'] === true || $body['result'] === 'True')) {
                 Log::info("WATI: ✅ Session message successfully sent to {$adminEmail} ({$whatsappNumber}).");
