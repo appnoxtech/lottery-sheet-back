@@ -273,4 +273,39 @@ class AuthController extends Controller
     {
         return $user && $user->email === env('SUPER_ADMIN_EMAIL', 'master@example.com');
     }
+
+    /**
+     * Update the authenticated admin's profile (name, whatsapp_number).
+     */
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'name'             => 'sometimes|string|max:255',
+            'whatsapp_number'  => [
+                'nullable',
+                'string',
+                'regex:/^\+?[1-9]\d{6,14}$/',
+            ],
+        ], [
+            'whatsapp_number.regex' => 'Please enter a valid WhatsApp number with country code (e.g. +919876543210)',
+        ]);
+
+        $user = $request->user();
+
+        if (isset($validated['name'])) {
+            $user->name = $validated['name'];
+        }
+
+        if (array_key_exists('whatsapp_number', $validated)) {
+            // Store without the + prefix — WatiService will strip it anyway
+            $user->whatsapp_number = $validated['whatsapp_number'] ?? null;
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user'    => $user,
+        ]);
+    }
 }

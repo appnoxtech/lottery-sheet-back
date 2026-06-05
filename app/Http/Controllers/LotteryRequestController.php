@@ -6,6 +6,7 @@ use App\Models\LotteryRequest;
 use App\Models\User;
 use App\Mail\AdminNotification;
 use App\Mail\CustomerAcceptanceMail;
+use App\Services\WatiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -84,6 +85,20 @@ class LotteryRequestController extends Controller
         } catch (\Exception $e) {
             // Log the error but don't fail the request if email is not configured properly
             \Log::error('Failed to send admin notification email: ' . $e->getMessage());
+        }
+
+        // Send WhatsApp notification via WATI to all approved admins with a saved whatsapp_number
+        try {
+            $adminsWithWhatsApp = User::where('is_approved', true)
+                ->whereNotNull('whatsapp_number')
+                ->where('whatsapp_number', '!=', '')
+                ->get();
+            if ($adminsWithWhatsApp->isNotEmpty()) {
+                $watiService = new WatiService();
+                $watiService->notifyAdmins($lotteryRequest, $adminsWithWhatsApp);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send WATI WhatsApp notification: ' . $e->getMessage());
         }
 
         return response()->json([

@@ -47,4 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin User Management
     Route::get('/admin/pending-users', [AuthController::class, 'getPendingUsers']);
     Route::post('/admin/users/{id}/approve', [AuthController::class, 'approveUser']);
+
+    // Admin Profile (WhatsApp number, name)
+    Route::patch('/admin/profile', [AuthController::class, 'updateProfile']);
 });
