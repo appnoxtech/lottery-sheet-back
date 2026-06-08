@@ -16,8 +16,8 @@ class WatiService
 
     public function __construct()
     {
-        $this->apiUrl = rtrim(env('WATI_API_URL', ''), '/');
-        $this->apiToken = env('WATI_API_TOKEN', '');
+        $this->apiUrl = rtrim(config('wati.api_url', ''), '/');
+        $this->apiToken = config('wati.api_token', '');
 
         $this->client = new Client([
             'timeout' => 15,
@@ -104,7 +104,7 @@ class WatiService
      */
     protected function sendTemplateMessage(string $whatsappNumber, array $parameters, string $adminEmail): bool
     {
-        $templateName = env('WATI_TEMPLATE_NAME', 'lottery_admin_notification');
+        $templateName = config('wati.template_name', 'lottery_notification_paysigur');
         $url = "{$this->apiUrl}/api/v1/sendTemplateMessage?whatsappNumber={$whatsappNumber}";
 
         $payload = [
