@@ -138,11 +138,10 @@ class LotteryRequestController extends Controller
             $query->whereJsonContains('lottery_selections', $request->lottery_type);
         }
 
-        $requests = $query->orderBy('created_at', 'desc')->get();
+        $perPage = $request->input('per_page', 10);
+        $requests = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
-        return response()->json([
-            'data' => $requests
-        ]);
+        return response()->json($requests);
     }
 
     public function updateStatus(Request $request, $id)
